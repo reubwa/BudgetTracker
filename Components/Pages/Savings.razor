@@ -7,15 +7,18 @@
     td, table {
         padding: 7px;
     }
+
+    button {
+        border: none;
+        padding: 7px;
+    }
 </style>
-<table>
-    <tr>
-        <td><button>Add</button></td>
-        <td><button>Predictor</button></td>
-        <td><button>Update</button></td>
-        <td><button>Delete</button></td>
-    </tr>
-</table>
+<div class="btn-group" role="toolbar">
+    <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;">Add</button>
+    <button class="btn-info">Predictor</button>
+    <button class="btn-secondary">Update</button>
+    <button class="btn-danger" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Delete</button>
+</div>
 <table>
     <tr>
         <td><Input type="checkbox" /></td>

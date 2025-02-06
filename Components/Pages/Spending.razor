@@ -7,47 +7,84 @@
     td, table {
         padding: 7px;
     }
+    button {
+        border: none;
+        padding: 7px;
+    }
+
+    .td-list {
+        width: 100%;
+        border-radius: 5px 5px 0 0;
+        border-collapse: collapse;
+        overflow: hidden;
+        color: #373636;
+    }
+
+    thead {
+        background-color: lightgray;
+        font-weight: 300;
+    }
+
+    tbody tr:nth-of-type(even) {
+        background-color: #a3a3a3;
+    }
+
+    tbody tr:hover {
+        background-color: #dcd7d7;
+    }
+
+    tbody tr:last-of-type {
+        border-bottom: 2px solid #828583;
+    }
 </style>
 <table>
     <tr>
-        <td><p>From</p></td>
-        <td><input type="date"></td>
-        <td><p>To</p></td>
-        <td><input type="date"></td>
-        <td><p>Category</p></td>
+        <td><label for="fromd">From</label></td>
+        <td><input type="date" id="fromd"></td>
+        <td><label for="tod">To</label></td>
+        <td><input type="date" id="tod"></td>
+        <td><label for="catd">Category</label></td>
         <td>
-            <select>
+            <select id="catd">
                 <option>All</option>
                 <option>Groceries</option>
             </select>
         </td>
-        <td><button>Add</button></td>
-        <td><button>Update</button></td>
-        <td><button>Delete</button></td>
+        <td>
+            <div class="btn-group" role="toolbar">
+                <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;">Add</button>
+                <button class="btn-secondary">Update</button>
+                <button class="btn-danger" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Delete</button>
+            </div>
+        </td>
     </tr>
 </table>
-<table>
-    <tr>
-        <th></th>
-        <th>Place</th>
-        <th>Category</th>
-        <th>Date</th>
-        <th>Cost</th>
-    </tr>
-    <tr>
-        <td><Input type="checkbox" /></td>
-        <td>Sainsbury's</td>
-        <td>Groceries</td>
-        <td>01/01/2025</td>
-        <td>£26.35</td>
-    </tr>
-    <tr>
-        <td><Input type="checkbox" /></td>
-        <td>Cineworld</td>
-        <td>Entertainment</td>
-        <td>01/01/2025</td>
-        <td>£14.99</td>
-    </tr>
+<table class="td-list">
+    <thead>
+        <tr>
+            <th></th>
+            <th>Place</th>
+            <th>Category</th>
+            <th>Date</th>
+            <th>Cost</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><Input type="checkbox" /></td>
+            <td>Sainsbury's</td>
+            <td>Groceries</td>
+            <td>01/01/2025</td>
+            <td>£26.35</td>
+        </tr>
+        <tr>
+            <td><Input type="checkbox" /></td>
+            <td>Cineworld</td>
+            <td>Entertainment</td>
+            <td>01/01/2025</td>
+            <td>£14.99</td>
+        </tr>
+    </tbody>
 </table>
 
 @code {
