@@ -12,11 +12,20 @@
         border: none;
         padding: 7px;
     }
+
+    input, select {
+        margin-bottom: 15px;
+        height: 30px;
+    }
+
+    .mdLbl {
+        margin-bottom: 5px;
+    }
 </style>
 <div class="btn-group" role="toolbar">
-    <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;">Add</button>
-    <button class="btn-info">Predictor</button>
-    <button class="btn-secondary">Update</button>
+    <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;" @onclick="() => mdAddSavings.Open()">Add</button>
+    <button class="btn-info" @onclick="() => mdPredictor.Open()">Predictor</button>
+    <button class="btn-secondary" @onclick="() => mdUpdateSavings.Open()">Update</button>
     <button class="btn-danger" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Delete</button>
 </div>
 <table>
@@ -30,6 +39,56 @@
     </tr>
 </table>
 <h3>Total: £866.77</h3>
+<ModalDialog @ref="@mdAddSavings" Title="Add Savings Account">
+    <div class="row" style="margin-left:10px;margin-right:10px;">
+        <label for="tbName" class="mdLbl">Name</label>
+        <input id="tbName" />
+        <label for="tbInterestRate" class="mdLbl">Interest Rate</label>
+        <input id="tbInterestRate" type="number" />
+        <label for="ddAccType">Account Type</label>
+        <select id="ddAccType">
+            <option>Savings</option>
+            <option>Current</option>
+        </select>
+        <hr />
+        <label for="tbBalance" class="mdLbl">Balance</label>
+        <input id="tbBalance" type="number" />
+        <div class="btn-group" role="toolbar" style="margin-top:15px;padding:12px;">
+            <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;width:50%;">Add</button>
+            <button class="btn btn-outline-secondary" @onclick="() => mdAddSavings.Close()" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Close</button>
+        </div>
+    </div>
+</ModalDialog>
+<ModalDialog @ref="@mdPredictor" Title="Predictor">
+    <div class="row" style="margin-left:10px;margin-right:10px;">
+        <label for="ddAccount" class="mdLbl">Account</label>
+        <select id="ddAccount">
+            <optgroup label="Current Accounts">
+                <option>Opt 1</option>
+            </optgroup>
+            <optgroup label="Savings Accounts">
+                <option>Opt 1</option>
+            </optgroup>
+        </select>
+        <label for="grpIfIAdd">If I add</label>
+        <input id="grpIfIAdd"/>
+        <select>
+            <option>Every Month</option>
+            <option>Every 2 Months</option>
+        </select>
+        <label for="ddAim">I'll have £0 in</label>
+        <select id="ddAim">
+            <option>1 Month</option>
+            <option>2 Months</option>
+        </select>
+        <div class="btn-group" role="toolbar" style="margin-top:15px;padding:12px;">
+            <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;width:50%;">Add</button>
+            <button class="btn btn-outline-secondary" @onclick="() => mdPredictor.Close()" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Close</button>
+        </div>
+    </div>
+</ModalDialog>
 @code {
-
+    private ModalDialog mdAddSavings { get; set; }
+    private ModalDialog mdUpdateSavings { get; set; }
+    private ModalDialog mdPredictor { get; set; }
 }

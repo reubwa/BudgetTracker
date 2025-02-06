@@ -7,11 +7,25 @@
     td, table {
         padding: 7px;
     }
+
+    button {
+        border: none;
+        padding: 7px;
+    }
+
+    input, select {
+        margin-bottom: 15px;
+        height: 30px;
+    }
+
+    .mdLbl {
+        margin-bottom: 5px;
+    }
 </style>
 <div class="btn-group" role="toolbar">
-    <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;">Add</button>
-    <button class="btn-info">Predictor</button>
-    <button class="btn-secondary">Update</button>
+    <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;" @onclick="() => mdAddGoal.Open()">Add</button>
+    <button class="btn-info" @onclick="() => mdPredictor.Open()">Predictor</button>
+    <button class="btn-secondary" @onclick="() => mdUpdateGoal.Open()">Update</button>
     <button class="btn-danger" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Delete</button>
 </div>
 <table>
@@ -24,6 +38,28 @@
         <td><h4>New Car</h4></td>
     </tr>
 </table>
+<ModalDialog @ref="@mdAddGoal" Title="Add Goal">
+    <div class="row" style="margin-left:10px;margin-right:10px;">
+        <label for="tbName" class="mdLbl">Name</label>
+        <input id="tbName" />
+        <label for="tbAmount" class="mdLbl">Amount</label>
+        <input id="tbAmount" type="number" />
+        <label for="dpBy" class="mdLbl">By</label>
+        <input id="dbBy" type="date" />
+        <div class="btn-group" role="toolbar" style="margin-top:15px;padding:12px;">
+            <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;width:50%;">Add</button>
+            <button class="btn btn-outline-secondary" @onclick="() => mdAddGoal.Close()" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Close</button>
+        </div>
+    </div>
+</ModalDialog>
+<ModalDialog @ref="@mdPredictor" Title="Predictor">
+    <div class="row" style="margin-left:10px;margin-right:10px;">
+        <h4>You'll reach your goal on time if you add at least £0 per month until then</h4>
+        <button class="btn btn-outline-secondary" @onclick="() => mdPredictor.Close()" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Close</button>
+    </div>
+</ModalDialog>
 @code {
-
+    private ModalDialog mdAddGoal { get; set; }
+    private ModalDialog mdUpdateGoal { get; set; }
+    private ModalDialog mdPredictor { get; set; }
 }

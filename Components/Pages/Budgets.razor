@@ -12,13 +12,23 @@
         border: none;
         padding: 7px;
     }
+
+    input, select {
+        margin-bottom: 15px;
+        height: 30px;
+    }
+
+    .mdLbl {
+        margin-bottom: 5px;
+    }
 </style>
 <table>
     <tr>
         <td>
             <div class="btn-group" role="toolbar">
-                <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;">Add</button>
-                <button class="btn-secondary">Update</button>
+                <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;" @onclick="() => mdAddBudget.Open()">Add</button>
+                <button class="btn-secondary" @onclick="() => mdUpdateBudget.Open()">Update</button>
+                <button class="btn-secondary" @onclick="() => mdUpdateSpending.Open()">Update Spending</button>
                 <button class="btn-danger" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Delete</button>
             </div>
         </td>
@@ -34,6 +44,25 @@
         <td><h4>Family</h4></td>
     </tr>
 </table>
+<ModalDialog @ref="@mdAddBudget" Title="Add Budget">
+    <div class="row" style="margin-left:10px;margin-right:10px;">
+        <label for="tbName" class="mdLbl">Name</label>
+        <input id="tbName" />
+        <label for="tbStartingAmount" class="mdLbl">Starting Amount</label>
+        <input id="tbStartingAmount" type="number" />
+        <hr>
+        <label for="ddGoal" class="mdLbl">Goal</label>
+        <select id="ddGoal">
+            <option>Option 1</option>
+        </select>
+        <div class="btn-group" role="toolbar" style="margin-top:15px;padding:12px;">
+            <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;width:50%;">Add</button>
+            <button class="btn btn-outline-secondary" @onclick="() => mdAddBudget.Close()" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Close</button>
+        </div>
+    </div>
+</ModalDialog>
 @code {
-
+    private ModalDialog mdAddBudget { get; set; }
+    private ModalDialog mdUpdateBudget { get; set; }
+    private ModalDialog mdUpdateSpending { get; set; }
 }

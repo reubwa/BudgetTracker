@@ -36,6 +36,13 @@
     tbody tr:last-of-type {
         border-bottom: 2px solid #828583;
     }
+    input, select {
+        margin-bottom:15px;
+        height:30px;
+    }
+    .mdLbl {
+        margin-bottom:5px;
+    }
 </style>
 <table>
     <tr>
@@ -52,8 +59,8 @@
         </td>
         <td>
             <div class="btn-group" role="toolbar">
-                <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;">Add</button>
-                <button class="btn-secondary">Update</button>
+                <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;" @onclick="() => mdAddSpending.Open()">Add</button>
+                <button class="btn-secondary" @onclick="() => mdUpdateSpending.Open()">Update</button>
                 <button class="btn-danger" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Delete</button>
             </div>
         </td>
@@ -86,7 +93,35 @@
         </tr>
     </tbody>
 </table>
-
+<ModalDialog @ref="@mdAddSpending" Title="Add Spending">
+    <div class="row" style="margin-left:10px;margin-right:10px;">
+        <label for="tbName" class="mdLbl">Name</label>
+        <input id="tbName"/>
+        <label for="dpDate" class="mdLbl">Date</label>
+        <input id="dpDate" type="date"/>
+        <label for="tbCost" class="mdLbl">Cost</label>
+        <input id="tbCost" type="number"/>
+        <hr>
+        <label for="ddAccount" class="mdLbl">Account</label>
+        <select id="ddAccount">
+            <optgroup label="Current Accounts">
+                <option>Opt 1</option>
+            </optgroup>
+            <optgroup label="Savings Accounts">
+                <option>Opt 1</option>
+            </optgroup>
+        </select>
+        <label for="ddBudget" class="mdLbl">Budget</label>
+        <select id="ddBudget">
+            <option>Option 1</option>
+        </select>
+        <div class="btn-group" role="toolbar" style="margin-top:15px;padding:12px;">
+            <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;width:50%;">Add</button>
+            <button class="btn btn-outline-secondary" @onclick="() => mdAddSpending.Close()" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Close</button>
+        </div>
+    </div>
+</ModalDialog>
 @code {
-
+    private ModalDialog mdAddSpending { get; set; }
+    private ModalDialog mdUpdateSpending { get; set; }
 }
