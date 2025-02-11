@@ -18,15 +18,38 @@
         height: 30px;
     }
 
+    .td-list {
+        width: 100%;
+        border-radius: 5px 5px 0 0;
+        border-collapse: collapse;
+        overflow: hidden;
+        color: #373636;
+    }
+
+    thead {
+        background-color: lightgray;
+        font-weight: 300;
+    }
+
+    tbody tr:nth-of-type(even) {
+        background-color: #a3a3a3;
+    }
+
+    tbody tr:hover {
+        background-color: #dcd7d7;
+    }
+
+    tbody tr:last-of-type {
+        border-bottom: 2px solid #828583;
+    }
+
     .mdLbl {
         margin-bottom: 5px;
     }
 </style>
 <div class="btn-group" role="toolbar">
-    <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;" @onclick="() => mdAddSavings.Open()">Add</button>
-    <button class="btn-info" @onclick="() => mdPredictor.Open()">Predictor</button>
-    <button class="btn-secondary" @onclick="() => mdUpdateSavings.Open()">Update</button>
-    <button class="btn-danger" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Delete</button>
+    <button class="btn-info" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;" @onclick="() => mdPredictor.Open()">Predictor</button>
+    <button class="btn-secondary" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;" @onclick="() => mdTransactionSheet.Open()">Transaction Sheet</button>
 </div>
 <table>
     <tr>
@@ -39,26 +62,6 @@
     </tr>
 </table>
 <h3>Total: £866.77</h3>
-<ModalDialog @ref="@mdAddSavings" Title="Add Savings Account">
-    <div class="row" style="margin-left:10px;margin-right:10px;">
-        <label for="tbName" class="mdLbl">Name</label>
-        <input id="tbName" />
-        <label for="tbInterestRate" class="mdLbl">Interest Rate</label>
-        <input id="tbInterestRate" type="number" />
-        <label for="ddAccType">Account Type</label>
-        <select id="ddAccType">
-            <option>Savings</option>
-            <option>Current</option>
-        </select>
-        <hr />
-        <label for="tbBalance" class="mdLbl">Balance</label>
-        <input id="tbBalance" type="number" />
-        <div class="btn-group" role="toolbar" style="margin-top:15px;padding:12px;">
-            <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;width:50%;">Add</button>
-            <button class="btn btn-outline-secondary" @onclick="() => mdAddSavings.Close()" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Close</button>
-        </div>
-    </div>
-</ModalDialog>
 <ModalDialog @ref="@mdPredictor" Title="Predictor">
     <div class="row" style="margin-left:10px;margin-right:10px;">
         <label for="ddAccount" class="mdLbl">Account</label>
@@ -87,8 +90,38 @@
         </div>
     </div>
 </ModalDialog>
+<ModalDialog @ref="@mdTransactionSheet" Title="Transaction Sheet">
+    <div class="row" style="margin-left:10px;margin-right:10px;">
+        <table class="td-list">
+    <thead>
+        <tr>
+            <th></th>
+            <th>Place</th>
+            <th>Category</th>
+            <th>Date</th>
+            <th>Cost</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><Input type="checkbox" /></td>
+            <td>Sainsbury's</td>
+            <td>Groceries</td>
+            <td>01/01/2025</td>
+            <td>£26.35</td>
+        </tr>
+        <tr>
+            <td><Input type="checkbox" /></td>
+            <td>Cineworld</td>
+            <td>Entertainment</td>
+            <td>01/01/2025</td>
+            <td>£14.99</td>
+        </tr>
+    </tbody>
+</table>
+    </div>
+</ModalDialog>
 @code {
-    private ModalDialog mdAddSavings { get; set; }
-    private ModalDialog mdUpdateSavings { get; set; }
+    private ModalDialog mdTransactionSheet { get; set; }
     private ModalDialog mdPredictor { get; set; }
 }

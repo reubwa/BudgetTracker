@@ -1,0 +1,81 @@
+﻿@page "/accounts"
+@rendermode InteractiveServer
+<PageTitle>Accounts</PageTitle>
+<h3>Accounts</h3>
+<style>
+    td, table {
+        padding: 7px;
+    }
+
+    button {
+        border: none;
+        padding: 7px;
+    }
+
+    input, select {
+        margin-bottom: 15px;
+        height: 30px;
+    }
+
+    .mdLbl {
+        margin-bottom: 5px;
+    }
+</style>
+<table>
+    <tr>
+        <td>
+            <div class="btn-group" role="toolbar">
+                <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;" @onclick="() => mdAddAccount.Open()">Add</button>
+                <button class="btn-secondary" @onclick="() => mdUpdateAccount.Open()">Update</button>
+                <button class="btn-danger" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Delete</button>
+            </div>
+        </td>
+    </tr>
+</table>
+<table>
+    <tr>
+        <td><Input type="checkbox" /></td>
+        <td>
+            <table>
+                <tr><td style="padding:0px;"><h4>FlexOne</h4></td></tr>
+                <tr><td style="padding:0px;"><h5>£645.34</h5></td></tr>
+            </table>
+        </td>
+        <td><h6>Current Account</h6></td>
+    </tr>
+    <tr>
+        <td><Input type="checkbox" /></td>
+        <td>
+            <table>
+                <tr><td style="padding:0px;"><h4>FlexSave</h4></td></tr>
+                <tr><td style="padding:0px;"><h5>£443.43</h5></td></tr>
+            </table>
+        </td>
+        <td><h6>Savings Account</h6></td>
+    </tr>
+</table>
+<ModalDialog @ref="@mdAddAccount" Title="Add Account">
+    <div class="row" style="margin-left:10px;margin-right:10px;">
+        <label for="tbName" class="mdLbl">Name</label>
+        <input id="tbName" />
+        <label for="tbInterestRate" class="mdLbl">Interest Rate</label>
+        <input id="tbInterestRate" type="number" />
+        <label for="ddType" class="mdLbl">Type</label>
+        <select id="ddType">
+            <option>Current Account</option>
+            <option>Savings Account</option>
+        </select>
+        <hr>
+        <label for="tbBalance" class="mdLbl">Balance</label>
+        <input id="tbBalance" type="number"/>
+        <div class="btn-group" role="toolbar" style="margin-top:15px;padding:12px;">
+            <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;width:50%;">Add</button>
+            <button class="btn btn-outline-secondary" @onclick="() => mdAddAccount.Close()" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Close</button>
+        </div>
+    </div>
+</ModalDialog>
+
+@code {
+    private ModalDialog mdAddAccount { get; set; }
+    private ModalDialog mdUpdateAccount { get; set; }
+}
