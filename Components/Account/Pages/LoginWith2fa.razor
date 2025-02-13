@@ -73,6 +73,8 @@
         if (result.Succeeded)
         {
             Logger.LogInformation("User with ID '{UserId}' logged in with 2fa.", userId);
+            SQLite.createTables();
+            SQLite.readData();
             RedirectManager.RedirectTo(ReturnUrl);
         }
         else if (result.IsLockedOut)

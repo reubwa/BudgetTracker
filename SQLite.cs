@@ -47,46 +47,54 @@ namespace BudgetTracker
             while(sqlDre.Read()) 
             {
                 var newAcc = new Account();
-                newAcc.id = (int)sqlDre.GetValue(sqlDre.GetOrdinal("accountID"));
+                newAcc.id = (int)(Int64)sqlDre.GetValue(sqlDre.GetOrdinal("accountID"));
                 newAcc.name = (string)sqlDre.GetValue(sqlDre.GetOrdinal("name"));
                 newAcc.interestRate = (double)sqlDre.GetValue(sqlDre.GetOrdinal("interestRate"));
                 newAcc.balance = (double)sqlDre.GetValue(sqlDre.GetOrdinal("balance"));
                 newAcc.type = (string)sqlDre.GetValue(sqlDre.GetOrdinal("type"));
                 DB.accountTable.Add(newAcc);
             }
+            sqlDre.Close();
             sqlComm.CommandText = "SELECT * FROM Budget";
             sqlDre = sqlComm.ExecuteReader();
             while (sqlDre.Read())
             {
                 var newBud = new Budget();
-                newBud.id = (int)sqlDre.GetValue(sqlDre.GetOrdinal("budgetID"));
+                newBud.id = (Int64)sqlDre.GetValue(sqlDre.GetOrdinal("budgetID"));
                 newBud.name = (string)sqlDre.GetValue(sqlDre.GetOrdinal("name"));
-                newBud.goalID = (int)sqlDre.GetValue(sqlDre.GetOrdinal("goalID"));
+                if(sqlDre.GetValue(sqlDre.GetOrdinal("goalID")) is null){ newBud.goalID = 0; }
+                else{newBud.goalID = (int)sqlDre.GetValue(sqlDre.GetOrdinal("goalID"));}
                 DB.budgetTable.Add(newBud);
             }
+            sqlDre.Close();
             sqlComm.CommandText = "SELECT * FROM Goal";
             sqlDre = sqlComm.ExecuteReader();
             while (sqlDre.Read()) 
             { 
                 var newGoa = new Goal();
-                newGoa.id = (int)sqlDre.GetValue(sqlDre.GetOrdinal("goalID"));
+                newGoa.id = (Int64)sqlDre.GetValue(sqlDre.GetOrdinal("goalID"));
                 newGoa.name = (string)sqlDre.GetValue(sqlDre.GetOrdinal("name"));
                 newGoa.amount = (double)sqlDre.GetValue(sqlDre.GetOrdinal("amount"));
-                newGoa.targetDate = DateTime.Parse((string)sqlDre.GetValue(sqlDre.GetOrdinal("targetDate")));
+                var dateStr = sqlDre.GetValue(sqlDre.GetOrdinal("targetDate")).ToString();
+                newGoa.targetDate = Convert.ToDateTime(dateStr);
                 DB.goalTable.Add(newGoa);
             }
+            sqlDre.Close();
             sqlComm.CommandText = "SELECT * FROM Payment";
             sqlDre = sqlComm.ExecuteReader();
             while (sqlDre.Read()) 
             {
                 var newPay = new Payment();
-                newPay.id = (int)sqlDre.GetValue(sqlDre.GetOrdinal("paymentID"));
+                newPay.id = (Int64)sqlDre.GetValue(sqlDre.GetOrdinal("paymentID"));
                 newPay.name = (string)sqlDre.GetValue(sqlDre.GetOrdinal("name"));
                 newPay.category = (string)sqlDre.GetValue(sqlDre.GetOrdinal("category"));
-                newPay.date =  DateTime.Parse((string)sqlDre.GetValue(sqlDre.GetOrdinal("date")));
+                var dateStr = sqlDre.GetValue(sqlDre.GetOrdinal("date")).ToString();
+                newPay.date =  Convert.ToDateTime(dateStr);
                 newPay.cost = (double)sqlDre.GetValue(sqlDre.GetOrdinal("cost"));
-                newPay.accountID = (int)sqlDre.GetValue(sqlDre.GetOrdinal("accountID"));
-                newPay.budgetID = (int)sqlDre.GetValue(sqlDre.GetOrdinal("budgetID"));
+                if (sqlDre.GetValue(sqlDre.GetOrdinal("accountID")) is null) { newPay.accountID = 0; }
+                else { newPay.accountID = (int)sqlDre.GetValue(sqlDre.GetOrdinal("accountID")); }
+                if (sqlDre.GetValue(sqlDre.GetOrdinal("budgetID")) is null) { newPay.budgetID = 0; }
+                else { newPay.budgetID = (int)sqlDre.GetValue(sqlDre.GetOrdinal("budgetID")); }
                 DB.paymentTable.Add(newPay);
             }
             sqlConn.Close();
@@ -112,14 +120,14 @@ namespace BudgetTracker
     }
     public class Goal
     {
-        public int id { get; set; }
+        public Int64 id { get; set; }
         public string name { get; set; }
         public double amount { get; set; }
         public DateTime targetDate { get; set; }
     }
     public class Payment
     {
-        public int id { get; set; }
+        public Int64 id { get; set; }
         public string name { get; set; }
         public string category { get; set; }
         public DateTime date { get; set; }
@@ -129,14 +137,14 @@ namespace BudgetTracker
     }
     public class Budget
     {
-        public int id { get; set; }
+        public Int64 id { get; set; }
         public string name { get; set; }
         public double startingAmount { get; set; }
         public int goalID { get; set; }
     }
     public class Account
     {
-        public int id { get; set;}
+        public Int64 id { get; set;}
         public string name { get; set; }
         public double interestRate { get; set; }
         public double balance { get; set; }

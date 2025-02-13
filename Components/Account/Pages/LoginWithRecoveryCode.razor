@@ -61,6 +61,8 @@
         if (result.Succeeded)
         {
             Logger.LogInformation("User with ID '{UserId}' logged in with a recovery code.", userId);
+            SQLite.createTables();
+            SQLite.readData();
             RedirectManager.RedirectTo(ReturnUrl);
         }
         else if (result.IsLockedOut)

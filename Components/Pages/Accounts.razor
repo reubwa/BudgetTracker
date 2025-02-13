@@ -1,5 +1,7 @@
 ﻿@page "/accounts"
+@using Microsoft.AspNetCore.Authorization
 @rendermode InteractiveServer
+@attribute [Authorize]
 <PageTitle>Accounts</PageTitle>
 <h3>Accounts</h3>
 <style>
@@ -33,26 +35,19 @@
     </tr>
 </table>
 <table>
-    <tr>
-        <td><Input type="checkbox" /></td>
-        <td>
-            <table>
-                <tr><td style="padding:0px;"><h4>FlexOne</h4></td></tr>
-                <tr><td style="padding:0px;"><h5>£645.34</h5></td></tr>
-            </table>
-        </td>
-        <td><h6>Current Account</h6></td>
-    </tr>
-    <tr>
-        <td><Input type="checkbox" /></td>
-        <td>
-            <table>
-                <tr><td style="padding:0px;"><h4>FlexSave</h4></td></tr>
-                <tr><td style="padding:0px;"><h5>£443.43</h5></td></tr>
-            </table>
-        </td>
-        <td><h6>Savings Account</h6></td>
-    </tr>
+    @foreach(var instance in DB.accountTable)
+    {
+        <tr id="row.@instance.id">
+            <td><input id="row.cb.@instance.id" type="checkbox"/></td>
+            <td>
+                <table>
+                    <tr><td style="padding:0px;"><h4>@instance.name</h4></td></tr>
+                    <tr><td style="padding:0px;"><h4>£@instance.balance</h4></td></tr>
+                </table>
+            </td>
+            <td><h6>@instance.type</h6></td>
+        </tr>
+    }
 </table>
 <ModalDialog @ref="@mdAddAccount" Title="Add Account">
     <div class="row" style="margin-left:10px;margin-right:10px;">

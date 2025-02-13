@@ -1,5 +1,7 @@
 ﻿@page "/savings"
+@using Microsoft.AspNetCore.Authorization
 @rendermode InteractiveServer
+@attribute [Authorize]
 
 <PageTitle>Savings</PageTitle>
 <h3>Savings</h3>
@@ -52,14 +54,16 @@
     <button class="btn-secondary" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;" @onclick="() => mdTransactionSheet.Open()">Transaction Sheet</button>
 </div>
 <table>
-    <tr>
-        <td><Input type="checkbox" /></td>
-        <td><h4>Instant Access: £213.33</h4></td>
-    </tr>
-    <tr>
-        <td><Input type="checkbox" /></td>
-        <td><h4>ISA: £653.44</h4></td>
-    </tr>
+    @foreach(var instance in DB.accountTable)
+    {
+        if(instance.type=="Savings")
+        {
+            <tr id="row.@instance.id">
+                <td><input id="row.cb.@instance.id" type="checkbox"/></td>
+                <td><h4>@instance.name : £@instance.balance</h4></td>
+            </tr>
+        }
+    }
 </table>
 <h3>Total: £866.77</h3>
 <ModalDialog @ref="@mdPredictor" Title="Predictor">
@@ -124,4 +128,5 @@
 @code {
     private ModalDialog mdTransactionSheet { get; set; }
     private ModalDialog mdPredictor { get; set; }
+    public static List<Account> savingsAccts = new List<Account>();
 }

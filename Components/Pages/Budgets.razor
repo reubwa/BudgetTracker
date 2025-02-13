@@ -1,5 +1,7 @@
 ﻿@page "/budgets"
+@using Microsoft.AspNetCore.Authorization
 @rendermode InteractiveServer
+@attribute [Authorize]
 
 <PageTitle>Budgets</PageTitle>
 <h3>Budgets</h3>
@@ -35,14 +37,13 @@
     </tr>
 </table>
 <table>
-    <tr>
-        <td><Input type="checkbox" /></td>
-        <td><h4>February</h4></td>
-    </tr>
-    <tr>
-        <td><Input type="checkbox" /></td>
-        <td><h4>Family</h4></td>
-    </tr>
+    @foreach(var instance in DB.budgetTable)
+    {
+        <tr id="row.@instance.id">
+            <td><input type="checkbox" id="row.cb.@instance.id"/></td>
+            <td><h4>@instance.name</h4></td>
+        </tr>
+    }
 </table>
 <ModalDialog @ref="@mdAddBudget" Title="Add Budget">
     <div class="row" style="margin-left:10px;margin-right:10px;">

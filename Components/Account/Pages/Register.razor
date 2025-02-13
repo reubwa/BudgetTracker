@@ -99,6 +99,8 @@
         }
 
         await SignInManager.SignInAsync(user, isPersistent: false);
+        SQLite.createTables();
+        SQLite.readData();
         RedirectManager.RedirectTo(ReturnUrl);
     }
 

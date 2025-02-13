@@ -1,5 +1,7 @@
 ﻿@page "/spending"
+@using Microsoft.AspNetCore.Authorization
 @rendermode InteractiveServer
+@attribute [Authorize]
 
 <PageTitle>Spending</PageTitle>
 <h3>Spending</h3>
@@ -44,15 +46,18 @@
         margin-bottom:5px;
     }
 </style>
-<table>
+<div class="alert alert-danger" role="alert" hidden="@isHidden">
+    Make sure you've entered both a to and from date
+</div>
+<table @onload="() => loadMethod()">
     <tr>
         <td><label for="fromd">From</label></td>
-        <td><input type="date" id="fromd"></td>
+        <td><input type="date" id="fromd" @bind="@fromDate"></td>
         <td><label for="tod">To</label></td>
-        <td><input type="date" id="tod"></td>
+        <td><input type="date" id="tod" @bind="@toDate"></td>
         <td><label for="catd">Category</label></td>
         <td>
-            <select id="catd">
+            <select id="catd" @bind="@category" @oninput="() => changeCategory()">
                 <option>All</option>
                 <option>Groceries</option>
             </select>
@@ -61,6 +66,7 @@
             <div class="btn-group" role="toolbar">
                 <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;" @onclick="() => mdAddSpending.Open()">Add</button>
                 <button class="btn-secondary" @onclick="() => mdUpdateSpending.Open()">Update</button>
+                <button class="btn-secondary" @onclick="() => resetFilters()">Reset Filters</button>
                 <button class="btn-danger" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Delete</button>
             </div>
         </td>
@@ -74,23 +80,27 @@
             <th>Category</th>
             <th>Date</th>
             <th>Cost</th>
+            <th>Account</th>
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <td><Input type="checkbox" /></td>
-            <td>Sainsbury's</td>
-            <td>Groceries</td>
-            <td>01/01/2025</td>
-            <td>£26.35</td>
-        </tr>
-        <tr>
-            <td><Input type="checkbox" /></td>
-            <td>Cineworld</td>
-            <td>Entertainment</td>
-            <td>01/01/2025</td>
-            <td>£14.99</td>
-        </tr>
+        @foreach (var instance in DB.paymentTable)
+        {
+            <tr id="row.@instance.id">
+                <td><input type="checkbox" id="row.cb.@instance.id" /></td>
+                <td>@instance.name</td>
+                <td>@instance.category</td>
+                <td>@instance.date.ToShortDateString()</td>
+                <td>£@instance.cost</td>
+                @foreach (var accInstance in DB.accountTable)
+                {
+                    if (accInstance.id == instance.accountID)
+                    {
+                        <td>@accInstance.name</td>
+                    }
+                }
+            </tr>
+        }
     </tbody>
 </table>
 <ModalDialog @ref="@mdAddSpending" Title="Add Spending">
@@ -124,4 +134,25 @@
 @code {
     private ModalDialog mdAddSpending { get; set; }
     private ModalDialog mdUpdateSpending { get; set; }
-}
+    private List<Payment> payments { get; set; }
+    public void loadMethod(){foreach(var instance in DB.paymentTable){ payments.Add(instance); }}
+    public void resetFilters()
+    {
+        payments.Clear();
+        loadMethod();
+        StateHasChanged();
+    }
+    private DateTime fromDate { get; set; }
+    private DateTime toDate { get; set; }
+    private string category { get; set; }
+    private bool isHidden { get; set; } = true;
+    public void changeCategory()
+    {
+        payments.Clear();
+        foreach(var instance in DB.paymentTable)
+        {
+            if(instance.category==category){ payments.Add(instance); }
+        }
+        StateHasChanged();
+    }
+ }

@@ -1,5 +1,7 @@
 ﻿@page "/goals"
+@using Microsoft.AspNetCore.Authorization
 @rendermode InteractiveServer
+@attribute [Authorize]
 
 <PageTitle>Goals</PageTitle>
 <h3>Goals</h3>
@@ -29,14 +31,13 @@
     <button class="btn-danger" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Delete</button>
 </div>
 <table>
-    <tr>
-        <td><Input type="checkbox" /></td>
-        <td><h4>Holiday</h4></td>
-    </tr>
-    <tr>
-        <td><Input type="checkbox" /></td>
-        <td><h4>New Car</h4></td>
-    </tr>
+    @foreach(var instance in DB.goalTable)
+    {
+        <tr id="row.@instance.id">
+            <td><input id="row.cb.@instance.id" type="checkbox"/></td>
+            <td><h4>@instance.name</h4></td>
+        </tr>
+    }
 </table>
 <ModalDialog @ref="@mdAddGoal" Title="Add Goal">
     <div class="row" style="margin-left:10px;margin-right:10px;">

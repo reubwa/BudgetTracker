@@ -111,6 +111,8 @@
                 "{Name} logged in with {LoginProvider} provider.",
                 externalLoginInfo.Principal.Identity?.Name,
                 externalLoginInfo.LoginProvider);
+            SQLite.createTables();
+            SQLite.readData();
             RedirectManager.RedirectTo(ReturnUrl);
         }
         else if (result.IsLockedOut)

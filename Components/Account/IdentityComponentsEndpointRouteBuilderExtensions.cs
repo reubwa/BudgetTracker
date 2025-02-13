@@ -1,3 +1,4 @@
+using BudgetTracker;
 using BudgetTracker.Components.Account.Pages;
 using BudgetTracker.Components.Account.Pages.Manage;
 using BudgetTracker.Data;
@@ -46,6 +47,7 @@ namespace Microsoft.AspNetCore.Routing
                 [FromForm] string returnUrl) =>
             {
                 await signInManager.SignOutAsync();
+                SQLite.writeData();
                 return TypedResults.LocalRedirect($"~/{returnUrl}");
             });
 
