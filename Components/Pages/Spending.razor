@@ -106,11 +106,13 @@
 <ModalDialog @ref="@mdAddSpending" Title="Add Spending">
     <div class="row" style="margin-left:10px;margin-right:10px;">
         <label for="tbName" class="mdLbl">Name</label>
-        <input id="tbName"/>
+        <input id="tbName" @bind="@newName"/>
         <label for="dpDate" class="mdLbl">Date</label>
-        <input id="dpDate" type="date"/>
+        <input id="dpDate" type="date" @bind="@newDateProvider" @oninput="DatePreparer"/>
         <label for="tbCost" class="mdLbl">Cost</label>
-        <input id="tbCost" type="number"/>
+        <input id="tbCost" type="number" @bind="@newCostProvider" @oninput="CostPreparer"/>
+        <label for="tbCategory" class="mdLbl">Category</label>
+        <input id="tbCategory" @bind="@newCategory"/>
         <hr>
         <label for="ddAccount" class="mdLbl">Account</label>
         <select id="ddAccount">
@@ -150,6 +152,14 @@
     private bool fromDateHasChanged { get; set; } = false;
     private bool toDateHasChanged { get; set; } = false;
     private bool isHidden { get; set; } = true;
+    private string newName { get; set; }
+    private int newAccountID { get; set; }
+    private int newBudgetID { get; set; }
+    private string newCategory { get; set; } = "";
+    private double newCost { get; set; }
+    private string newCostProvider { get; set; }
+    private DateTime newDate { get; set; }
+    private string newDateProvider { get; set; } = "";
     private void ChangeCategory()
     {
         payments.Clear();
@@ -190,4 +200,20 @@
         }
         StateHasChanged();
     }
- }
+
+    private void NewSpending()
+    {
+        Payment newPayment = new Payment(){name = newName,accountID = newAccountID,budgetID = newBudgetID,category = newCategory,cost = newCost,date = newDate};
+    }
+
+    private void DatePreparer()
+    {
+        newDate = DateTime.Parse(newDateProvider);
+    }
+
+    private void CostPreparer()
+    {
+        newCost = double.Parse(newCostProvider);
+    }
+
+}
