@@ -46,9 +46,6 @@
         margin-bottom:5px;
     }
 </style>
-<div class="alert alert-danger" role="alert" hidden="@isHidden">
-    Make sure you've entered both a to and from date
-</div>
 <table @onload="LoadMethod">
     <tr>
         <td><label for="fromd">From</label></td>
@@ -65,9 +62,9 @@
         <td>
             <div class="btn-group" role="toolbar">
                 <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;" @onclick="() => mdAddSpending.Open()">Add</button>
-                <button class="btn-secondary" @onclick="() => mdUpdateSpending.Open()">Update</button>
+                <button class="btn-secondary" @onclick="updateSelected">Update</button>
                 <button class="btn-secondary" @onclick="ResetFilters">Reset Filters</button>
-                <button class="btn-danger" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Delete</button>
+                <button class="btn-danger" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;" @onclick="deleteSelected">Delete</button>
             </div>
         </td>
     </tr>
@@ -87,7 +84,7 @@
         @foreach (var instance in DB.paymentTable)
         {
             <tr id="row.@instance.id">
-                <td><input type="checkbox" id="row.cb.@instance.id" /></td>
+                <td><input type="checkbox" id="@instance.id" @onchange="cbxSelected(@instance.id)" /></td>
                 <td>@instance.name</td>
                 <td>@instance.category</td>
                 <td>@instance.date.ToShortDateString()</td>
@@ -148,11 +145,63 @@
         </div>
     </div>
 </ModalDialog>
+<ModalDialog @ref="@mdUpdateSpending" Title="Update Spending">
+    <div class="row" style="margin-left:10px;margin-right:10px;">
+        <label for="tbName" class="mdLbl">Name</label>
+        <input id="tbName" @bind="@newName"/>
+        <label for="dpDate" class="mdLbl">Date</label>
+        <input id="dpDate" type="date" @bind-value="@newDate"/>
+        <label for="tbCost" class="mdLbl">Cost</label>
+        <input id="tbCost" type="number" @bind="@newCostProvider" @oninput="CostPreparer"/>
+        <label for="tbCategory" class="mdLbl">Category</label>
+        <input id="tbCategory" @bind="@newCategory"/>
+        <hr>
+        <label for="ddAccount" class="mdLbl">Account</label>
+        <select id="ddAccount" @bind="@newAccountID">
+            <optgroup label="Current Accounts">
+                @foreach (var instance in DB.accountTable)
+                {
+                    if (instance.type.ToUpper() == "CURRENT")
+                    {
+                        <option value="@instance.id">@instance.name</option>
+                    }
+                }
+            </optgroup>
+            <optgroup label="Savings Accounts">
+                @foreach (var instance in DB.accountTable)
+                {
+                    if (instance.type.ToUpper() == "SAVINGS")
+                    {
+                        <option value="@instance.id">@instance.name</option>
+                    }
+                }
+            </optgroup>
+        </select>
+        <label for="ddBudget" class="mdLbl">Budget</label>
+        <select id="ddBudget" @bind="@newBudgetID">
+            @foreach (var instance in DB.budgetTable)
+            {
+                <option value="@instance.id">@instance.name</option>
+            }
+        </select>
+        <div class="btn-group" role="toolbar" style="margin-top:15px;padding:12px;">
+            <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;width:50%;" @onclick="UpdateSpending">Add</button>
+            <button class="btn btn-outline-secondary" @onclick="() => mdUpdateSpending.Close()" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Close</button>
+        </div>
+    </div>
+</ModalDialog>
 @code {
     private ModalDialog mdAddSpending { get; set; }
     private ModalDialog mdUpdateSpending { get; set; }
     private List<Payment> payments { get; set; }
-    private void LoadMethod(){foreach(var instance in DB.paymentTable){ payments.Add(instance); }}
+
+    private void LoadMethod()
+    {
+        foreach (var instance in DB.paymentTable)
+        {
+            payments.Add(instance);
+        }
+    }
 
     private void ResetFilters()
     {
@@ -160,13 +209,13 @@
         LoadMethod();
         StateHasChanged();
     }
+
     private DateTime fromDate { get; set; }
     private DateTime toDate { get; set; }
     private string category { get; set; }
     private bool catHasChanged { get; set; } = false;
     private bool fromDateHasChanged { get; set; } = false;
     private bool toDateHasChanged { get; set; } = false;
-    private bool isHidden { get; set; } = true;
     private string newName { get; set; }
     private int newAccountID { get; set; }
     private int newBudgetID { get; set; }
@@ -174,30 +223,77 @@
     private double newCost { get; set; }
     private string newCostProvider { get; set; }
     private DateTime newDate { get; set; }
+    private List<Payment> toRemove { get; set; }
+
     private void ChangeCategory()
     {
         payments.Clear();
         catHasChanged = true;
-        foreach(var instance in DB.paymentTable)
+        foreach (var instance in DB.paymentTable)
         {
-            if(instance.category==category&&toDateHasChanged==false&&fromDateHasChanged==false){ payments.Add(instance); }
-            else if(toDateHasChanged){if(instance.category==category&&instance.date>fromDate){payments.Add(instance);}}
-            else if(fromDateHasChanged){if(instance.category==category&&instance.date<toDate){payments.Add(instance);}}
-            else if(toDateHasChanged&&fromDateHasChanged){if(instance.category==category&&instance.date>fromDate&&instance.date<toDate){payments.Add(instance);}}
+            if (instance.category == category && toDateHasChanged == false && fromDateHasChanged == false)
+            {
+                payments.Add(instance);
+            }
+            else if (toDateHasChanged)
+            {
+                if (instance.category == category && instance.date > fromDate)
+                {
+                    payments.Add(instance);
+                }
+            }
+            else if (fromDateHasChanged)
+            {
+                if (instance.category == category && instance.date < toDate)
+                {
+                    payments.Add(instance);
+                }
+            }
+            else if (toDateHasChanged && fromDateHasChanged)
+            {
+                if (instance.category == category && instance.date > fromDate && instance.date < toDate)
+                {
+                    payments.Add(instance);
+                }
+            }
         }
+
         StateHasChanged();
     }
+
     private void FromDateChange()
     {
         payments.Clear();
         fromDateHasChanged = true;
         foreach (var instance in DB.paymentTable)
         {
-            if(instance.date>fromDate&&toDateHasChanged==false&&catHasChanged==false){payments.Add(instance);}
-            else if(toDateHasChanged){if(instance.date>fromDate&&instance.date<toDate){payments.Add(instance);}}
-            else if(catHasChanged){if(instance.date>fromDate&&instance.category==category){payments.Add(instance);}}
-            else if(toDateHasChanged&&catHasChanged){if(instance.date>fromDate&&instance.category==category&&instance.date<toDate){payments.Add(instance);}}
+            if (instance.date > fromDate && toDateHasChanged == false && catHasChanged == false)
+            {
+                payments.Add(instance);
+            }
+            else if (toDateHasChanged)
+            {
+                if (instance.date > fromDate && instance.date < toDate)
+                {
+                    payments.Add(instance);
+                }
+            }
+            else if (catHasChanged)
+            {
+                if (instance.date > fromDate && instance.category == category)
+                {
+                    payments.Add(instance);
+                }
+            }
+            else if (toDateHasChanged && catHasChanged)
+            {
+                if (instance.date > fromDate && instance.category == category && instance.date < toDate)
+                {
+                    payments.Add(instance);
+                }
+            }
         }
+
         StateHasChanged();
     }
 
@@ -207,25 +303,91 @@
         toDateHasChanged = true;
         foreach (var instance in DB.paymentTable)
         {
-            if(instance.date<toDate&&fromDateHasChanged==false&&catHasChanged==false){payments.Add(instance);}
-            else if(fromDateHasChanged){if(instance.date<toDate&&instance.date>fromDate){payments.Add(instance);}}
-            else if(catHasChanged){if(instance.date<toDate&&instance.category==category){payments.Add(instance);}}
-            else if(fromDateHasChanged&&catHasChanged){if(instance.date<toDate&&instance.category==category&&instance.date>fromDate){payments.Add(instance);}}
+            if (instance.date < toDate && fromDateHasChanged == false && catHasChanged == false)
+            {
+                payments.Add(instance);
+            }
+            else if (fromDateHasChanged)
+            {
+                if (instance.date < toDate && instance.date > fromDate)
+                {
+                    payments.Add(instance);
+                }
+            }
+            else if (catHasChanged)
+            {
+                if (instance.date < toDate && instance.category == category)
+                {
+                    payments.Add(instance);
+                }
+            }
+            else if (fromDateHasChanged && catHasChanged)
+            {
+                if (instance.date < toDate && instance.category == category && instance.date > fromDate)
+                {
+                    payments.Add(instance);
+                }
+            }
         }
+
         StateHasChanged();
     }
 
     private void NewSpending()
     {
-        Payment newPayment = new Payment(){name = newName,accountID = newAccountID,budgetID = newBudgetID,category = newCategory,cost = newCost,date = newDate};
+        Payment newPayment = new Payment() { name = newName, accountID = newAccountID, budgetID = newBudgetID, category = newCategory, cost = newCost, date = newDate };
         DB.paymentTable.Add(newPayment);
+        SQLite.writeData();
         mdAddSpending.Close();
         StateHasChanged();
     }
-    
+
+    private void UpdateSpending()
+    {
+        Payment updPayment = new Payment() { name = newName, accountID = newAccountID, budgetID = newBudgetID, category = newCategory, cost = newCost, date = newDate };
+        SQLite.updateItem(updPayment);
+        mdUpdateSpending.Close();
+        StateHasChanged();
+    }
+
     private void CostPreparer()
     {
         newCost = double.Parse(newCostProvider);
     }
 
+    private void cbxSelected(long paymentID)
+    {
+        if (toRemove.Contains(new Payment() { id = paymentID }))
+        {
+            toRemove.Remove(toRemove.Find(x => x.id == paymentID));
+        }
+        else
+        {
+            toRemove.Add(toRemove.Find(x => x.id == paymentID));
+        }
+    }
+
+    private void deleteSelected()
+    {
+        foreach (var payment in toRemove)
+        {
+            SQLite.deleteItem(payment);
+        }
+        toRemove.Clear();
+        StateHasChanged();
+    }
+
+    private void updateSelected()
+    {
+        if (toRemove.Count == 1)
+        {
+            newName = toRemove[0].name;
+            newAccountID = toRemove[0].accountID;
+            newBudgetID = toRemove[0].budgetID;
+            newCategory = toRemove[0].category;
+            newCostProvider = toRemove[0].cost.ToString();
+            newDate = toRemove[0].date;
+            mdUpdateSpending.Open();
+        }
+    }
 }

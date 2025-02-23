@@ -104,11 +104,95 @@ namespace BudgetTracker
             SQLiteConnection sqlConn = initConnection();
             SQLiteCommand sqlComm;
             sqlComm = sqlConn.CreateCommand();
-            foreach (Goal goal in DB.goalTable) { sqlComm.CommandText = "INSERT INTO Goal (goalID, name, amount, targetDate) VALUES (" + goal.id + "," + goal.name + "," + goal.amount + "," + goal.targetDate + ");"; sqlComm.ExecuteNonQueryAsync(); }
-            foreach (Payment payment in DB.paymentTable) { sqlComm.CommandText = "INSERT INTO Payment (paymentID, name, category, date, cost, accountID, budgetID) VALUES ("+payment.id+","+payment.name+","+payment.category+","+payment.date+","+payment.cost+","+payment.accountID+","+payment.budgetID+");"; sqlComm.ExecuteNonQueryAsync(); }
-            foreach (Budget budget in DB.budgetTable) { sqlComm.CommandText = "INSERT INTO Budget (budgetID, name, startingAmount, goalID) VALUES (" + budget.id + "," + budget.name + "," + budget.startingAmount + "," + budget.goalID + ");";sqlComm.ExecuteNonQueryAsync(); }
-            foreach (Account account in DB.accountTable) { sqlComm.CommandText = "INSERT INTO Account (accountID, name, interestRate, balance, type) VALUES (" + account.id + "," + account.name + "," + account.interestRate + "," + account.balance + "," + account.type + ");";sqlComm.ExecuteNonQueryAsync(); }
+            foreach (Goal goal in DB.goalTable) { sqlComm.CommandText = "INSERT INTO Goal (goalID, name, amount, targetDate) VALUES (" + goal.id + ",'" + goal.name + "'," + goal.amount + "," + goal.targetDate + ");"; sqlComm.ExecuteNonQueryAsync(); }
+            foreach (Payment payment in DB.paymentTable) { sqlComm.CommandText = "INSERT INTO Payment (paymentID, name, category, date, cost, accountID, budgetID) VALUES ("+payment.id+",'"+payment.name+"','"+payment.category+"',"+payment.date+","+payment.cost+","+payment.accountID+","+payment.budgetID+");"; sqlComm.ExecuteNonQueryAsync(); }
+            foreach (Budget budget in DB.budgetTable) { sqlComm.CommandText = "INSERT INTO Budget (budgetID, name, startingAmount, goalID) VALUES (" + budget.id + ",'" + budget.name + "'," + budget.startingAmount + "," + budget.goalID + ");";sqlComm.ExecuteNonQueryAsync(); }
+            foreach (Account account in DB.accountTable) { sqlComm.CommandText = "INSERT INTO Account (accountID, name, interestRate, balance, type) VALUES (" + account.id + ",'" + account.name + "'," + account.interestRate + "," + account.balance + ",'" + account.type + "');";sqlComm.ExecuteNonQueryAsync(); }
             sqlConn.Close();
+        }
+
+        public static void deleteItem(Goal goal)
+        {
+            SQLiteConnection sqlConn = initConnection();
+            SQLiteCommand sqlComm;
+            DB.goalTable.Remove(goal);
+            sqlComm = sqlConn.CreateCommand();
+            sqlComm.CommandText = "DELETE FROM Goal WHERE goalID = " + goal.id;
+            sqlComm.ExecuteNonQueryAsync();
+            sqlConn.Close();
+        }
+
+        public static void deleteItem(Payment payment)
+        {
+            SQLiteConnection sqlConn = initConnection();
+            SQLiteCommand sqlComm;
+            DB.paymentTable.Remove(payment);
+            sqlComm = sqlConn.CreateCommand();
+            sqlComm.CommandText = "DELETE FROM Payment WHERE paymentID = " + payment.id;
+            sqlComm.ExecuteNonQueryAsync();
+            sqlConn.Close();
+        }
+
+        public static void deleteItem(Budget budget)
+        {
+            SQLiteConnection sqlConn = initConnection();
+            SQLiteCommand sqlComm;
+            DB.budgetTable.Remove(budget);
+            sqlComm = sqlConn.CreateCommand();
+            sqlComm.CommandText = "DELETE FROM Budget WHERE budgetID = " + budget.id;
+            sqlComm.ExecuteNonQueryAsync();
+            sqlConn.Close();
+        }
+
+        public static void deleteItem(Account account)
+        {
+            SQLiteConnection sqlConn = initConnection();
+            SQLiteCommand sqlComm;
+            DB.accountTable.Remove(account);
+            sqlComm = sqlConn.CreateCommand();
+            sqlComm.CommandText = "DELETE FROM Account WHERE accountID = " + account.id;
+            sqlComm.ExecuteNonQueryAsync();
+            sqlConn.Close();
+        }
+
+        public static void updateItem(Goal updGoal)
+        {
+            SQLiteConnection sqlConn = initConnection();
+            SQLiteCommand sqlComm;
+            DB.goalTable[DB.goalTable.IndexOf(DB.goalTable.Find(x=>x.id==updGoal.id))] = updGoal;
+            sqlComm = sqlConn.CreateCommand();
+            sqlComm.CommandText = "UPDATE Goal SET name = '"+updGoal.name+"',"+updGoal.amount+","+updGoal.targetDate+" WHERE goalID = " + updGoal.id;
+            sqlComm.ExecuteNonQueryAsync();
+        }
+
+        public static void updateItem(Payment payment)
+        {
+            SQLiteConnection sqlConn = initConnection();
+            SQLiteCommand sqlComm;
+            DB.paymentTable[DB.paymentTable.IndexOf(DB.paymentTable.Find(x => x.id==payment.id))] = payment;
+            sqlComm = sqlConn.CreateCommand();
+            sqlComm.CommandText = "UPDATE Payment SET name = '"+payment.name+"','"+payment.category+"',"+payment.date+","+payment.cost+","+payment.accountID+","+payment.budgetID+" WHERE paymentID = " + payment.id;
+            sqlComm.ExecuteNonQueryAsync();
+        }
+
+        public static void updateItem(Budget budget)
+        {
+            SQLiteConnection sqlConn = initConnection();
+            SQLiteCommand sqlComm;
+            DB.budgetTable[DB.budgetTable.IndexOf(DB.budgetTable.Find(x => x.id == budget.id))] = budget;
+            sqlComm = sqlConn.CreateCommand();
+            sqlComm.CommandText = "UPDATE Budget SET name = '"+budget.name+"',"+budget.startingAmount+","+budget.goalID+" WHERE budgetID = " + budget.id;
+            sqlComm.ExecuteNonQueryAsync();
+        }
+
+        public static void updateItem(Account account)
+        {
+            SQLiteConnection sqlConn = initConnection();
+            SQLiteCommand sqlComm;
+            DB.accountTable[DB.accountTable.IndexOf(DB.accountTable.Find(x => x.id == account.id))] = account;
+            sqlComm = sqlConn.CreateCommand();
+            sqlComm.CommandText = "UPDATE Account SET name = '" + account.name+"',"+account.interestRate+","+account.balance+",'"+account.type+"'" + " WHERE accountID = " + account.id;
+            sqlComm.ExecuteNonQueryAsync();
         }
     }
     public static class DB
