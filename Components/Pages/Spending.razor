@@ -52,9 +52,9 @@
 <table @onload="LoadMethod">
     <tr>
         <td><label for="fromd">From</label></td>
-        <td><input type="date" id="fromd" @bind="@fromDate" @oninput="ToDateChange"></td>
+        <td><input type="date" id="fromd" @bind-value="@fromDate" @oninput="ToDateChange"></td>
         <td><label for="tod">To</label></td>
-        <td><input type="date" id="tod" @bind="@toDate" @oninput="FromDateChange"></td>
+        <td><input type="date" id="tod" @bind-value="@toDate" @oninput="FromDateChange"></td>
         <td><label for="catd">Category</label></td>
         <td>
             <select id="catd" @bind="@category" @oninput="ChangeCategory">
@@ -108,9 +108,9 @@
         <label for="tbName" class="mdLbl">Name</label>
         <input id="tbName" @bind="@newName"/>
         <label for="dpDate" class="mdLbl">Date</label>
-        <input id="dpDate" type="date" @bind="@newDateProvider" @oninput="DatePreparer"/>
+        <input id="dpDate" type="date" @bind-value="@newDateProvider" @oninput="DatePreparer"/>
         <label for="tbCost" class="mdLbl">Cost</label>
-        <input id="tbCost" type="number" @bind="@newCostProvider" @oninput="CostPreparer"/>
+        <input id="tbCost" type="number" @bind-value="@newCostProvider" @oninput="CostPreparer"/>
         <label for="tbCategory" class="mdLbl">Category</label>
         <input id="tbCategory" @bind="@newCategory"/>
         <hr>
