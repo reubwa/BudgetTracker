@@ -115,20 +115,35 @@
         <input id="tbCategory" @bind="@newCategory"/>
         <hr>
         <label for="ddAccount" class="mdLbl">Account</label>
-        <select id="ddAccount">
+        <select id="ddAccount" @bind-value="@newAccountID">
             <optgroup label="Current Accounts">
-                <option>Opt 1</option>
+                @foreach (var instance in DB.accountTable)
+                {
+                    if (instance.type.ToUpper() == "CURRENT")
+                    {
+                        <option value="@instance.id">@instance.name</option>
+                    }
+                }
             </optgroup>
             <optgroup label="Savings Accounts">
-                <option>Opt 1</option>
+                @foreach (var instance in DB.accountTable)
+                {
+                    if (instance.type.ToUpper() == "SAVINGS")
+                    {
+                        <option value="@instance.id">@instance.name</option>
+                    }
+                }
             </optgroup>
         </select>
         <label for="ddBudget" class="mdLbl">Budget</label>
-        <select id="ddBudget">
-            <option>Option 1</option>
+        <select id="ddBudget" @bind-value="@newBudgetID">
+            @foreach (var instance in DB.budgetTable)
+            {
+                <option value="@instance.id">@instance.name</option>
+            }
         </select>
         <div class="btn-group" role="toolbar" style="margin-top:15px;padding:12px;">
-            <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;width:50%;">Add</button>
+            <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;width:50%;" @onclick="NewSpending">Add</button>
             <button class="btn btn-outline-secondary" @onclick="() => mdAddSpending.Close()" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Close</button>
         </div>
     </div>
@@ -203,6 +218,9 @@
     private void NewSpending()
     {
         Payment newPayment = new Payment(){name = newName,accountID = newAccountID,budgetID = newBudgetID,category = newCategory,cost = newCost,date = newDate};
+        DB.paymentTable.Add(newPayment);
+        mdAddSpending.Close();
+        StateHasChanged();
     }
     
     private void CostPreparer()
