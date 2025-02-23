@@ -108,7 +108,7 @@
         <label for="tbName" class="mdLbl">Name</label>
         <input id="tbName" @bind="@newName"/>
         <label for="dpDate" class="mdLbl">Date</label>
-        <input id="dpDate" type="date" @bind-value="@newDate" @oninput="DatePreparer"/>
+        <input id="dpDate" type="date" @bind-value="@newDate"/>
         <label for="tbCost" class="mdLbl">Cost</label>
         <input id="tbCost" type="number" @bind="@newCostProvider" @oninput="CostPreparer"/>
         <label for="tbCategory" class="mdLbl">Category</label>
@@ -205,12 +205,7 @@
     {
         Payment newPayment = new Payment(){name = newName,accountID = newAccountID,budgetID = newBudgetID,category = newCategory,cost = newCost,date = newDate};
     }
-
-    private void DatePreparer()
-    {
-        //newDate = DateTime.Parse(newDateProvider);
-    }
-
+    
     private void CostPreparer()
     {
         newCost = double.Parse(newCostProvider);
