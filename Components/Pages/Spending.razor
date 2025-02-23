@@ -84,7 +84,7 @@
         @foreach (var instance in DB.paymentTable)
         {
             <tr id="row.@instance.id">
-                <td><input type="checkbox" id="@instance.id" @onchange="cbxSelected(instance.id)" /></td>
+                <td><input type="checkbox" id="@instance.id" @onchange="() => cbxSelected(instance.id)" /></td>
                 <td>@instance.name</td>
                 <td>@instance.category</td>
                 <td>@instance.date.ToShortDateString()</td>
