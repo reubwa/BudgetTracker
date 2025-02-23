@@ -49,15 +49,15 @@
 <div class="alert alert-danger" role="alert" hidden="@isHidden">
     Make sure you've entered both a to and from date
 </div>
-<table @onload="() => LoadMethod()">
+<table @onload="LoadMethod">
     <tr>
         <td><label for="fromd">From</label></td>
-        <td><input type="date" id="fromd" @bind="@fromDate" @oninput="() => ToDateChange()"></td>
+        <td><input type="date" id="fromd" @bind="@fromDate" @oninput="ToDateChange"></td>
         <td><label for="tod">To</label></td>
-        <td><input type="date" id="tod" @bind="@toDate" @oninput="() => FromDateChange()"></td>
+        <td><input type="date" id="tod" @bind="@toDate" @oninput="FromDateChange"></td>
         <td><label for="catd">Category</label></td>
         <td>
-            <select id="catd" @bind="@category" @oninput="() => ChangeCategory()">
+            <select id="catd" @bind="@category" @oninput="ChangeCategory">
                 <option>All</option>
                 <option>Groceries</option>
             </select>
@@ -66,7 +66,7 @@
             <div class="btn-group" role="toolbar">
                 <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;" @onclick="() => mdAddSpending.Open()">Add</button>
                 <button class="btn-secondary" @onclick="() => mdUpdateSpending.Open()">Update</button>
-                <button class="btn-secondary" @onclick="() => ResetFilters()">Reset Filters</button>
+                <button class="btn-secondary" @onclick="ResetFilters">Reset Filters</button>
                 <button class="btn-danger" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Delete</button>
             </div>
         </td>
