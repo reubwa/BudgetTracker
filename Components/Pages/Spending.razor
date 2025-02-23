@@ -108,9 +108,9 @@
         <label for="tbName" class="mdLbl">Name</label>
         <input id="tbName" @bind="@newName"/>
         <label for="dpDate" class="mdLbl">Date</label>
-        <input id="dpDate" type="date" @bind-value="@newDateProvider" @oninput="DatePreparer"/>
+        <input id="dpDate" type="date" @bind-value="@newDate" @oninput="DatePreparer"/>
         <label for="tbCost" class="mdLbl">Cost</label>
-        <input id="tbCost" type="number" @bind-value="@newCostProvider" @oninput="CostPreparer"/>
+        <input id="tbCost" type="number" @bind="@newCostProvider" @oninput="CostPreparer"/>
         <label for="tbCategory" class="mdLbl">Category</label>
         <input id="tbCategory" @bind="@newCategory"/>
         <hr>
@@ -208,7 +208,7 @@
 
     private void DatePreparer()
     {
-        newDate = DateTime.Parse(newDateProvider);
+        //newDate = DateTime.Parse(newDateProvider);
     }
 
     private void CostPreparer()
