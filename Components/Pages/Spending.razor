@@ -49,7 +49,7 @@
 <div class="alert alert-danger" role="alert" hidden="@isHidden">
     Make sure you've entered both a to and from date
 </div>
-<table @onload="() => loadMethod()">
+<table @onload="() => LoadMethod()">
     <tr>
         <td><label for="fromd">From</label></td>
         <td><input type="date" id="fromd" @bind="@fromDate"></td>
@@ -57,7 +57,7 @@
         <td><input type="date" id="tod" @bind="@toDate"></td>
         <td><label for="catd">Category</label></td>
         <td>
-            <select id="catd" @bind="@category" @oninput="() => changeCategory()">
+            <select id="catd" @bind="@category" @oninput="() => ChangeCategory()">
                 <option>All</option>
                 <option>Groceries</option>
             </select>
@@ -66,7 +66,7 @@
             <div class="btn-group" role="toolbar">
                 <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;" @onclick="() => mdAddSpending.Open()">Add</button>
                 <button class="btn-secondary" @onclick="() => mdUpdateSpending.Open()">Update</button>
-                <button class="btn-secondary" @onclick="() => resetFilters()">Reset Filters</button>
+                <button class="btn-secondary" @onclick="() => ResetFilters()">Reset Filters</button>
                 <button class="btn-danger" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Delete</button>
             </div>
         </td>
@@ -135,23 +135,58 @@
     private ModalDialog mdAddSpending { get; set; }
     private ModalDialog mdUpdateSpending { get; set; }
     private List<Payment> payments { get; set; }
-    public void loadMethod(){foreach(var instance in DB.paymentTable){ payments.Add(instance); }}
-    public void resetFilters()
+    private void LoadMethod(){foreach(var instance in DB.paymentTable){ payments.Add(instance); }}
+
+    private void ResetFilters()
     {
         payments.Clear();
-        loadMethod();
+        LoadMethod();
         StateHasChanged();
     }
     private DateTime fromDate { get; set; }
     private DateTime toDate { get; set; }
     private string category { get; set; }
+    private bool catHasChanged { get; set; } = false;
+    private bool fromDateHasChanged { get; set; } = false;
+    private bool toDateHasChanged { get; set; } = false;
     private bool isHidden { get; set; } = true;
-    public void changeCategory()
+    private void ChangeCategory()
     {
         payments.Clear();
+        catHasChanged = true;
         foreach(var instance in DB.paymentTable)
         {
-            if(instance.category==category){ payments.Add(instance); }
+            if(instance.category==category&&toDateHasChanged==false&&fromDateHasChanged==false){ payments.Add(instance); }
+            else if(toDateHasChanged){if(instance.category==category&&instance.date>fromDate){payments.Add(instance);}}
+            else if(fromDateHasChanged){if(instance.category==category&&instance.date<toDate){payments.Add(instance);}}
+            else if(toDateHasChanged&&fromDateHasChanged){if(instance.category==category&&instance.date>fromDate&&instance.date<toDate){payments.Add(instance);}}
+        }
+        StateHasChanged();
+    }
+    private void FromDateChange()
+    {
+        payments.Clear();
+        fromDateHasChanged = true;
+        foreach (var instance in DB.paymentTable)
+        {
+            if(instance.date>fromDate&&toDateHasChanged==false&&catHasChanged==false){payments.Add(instance);}
+            else if(toDateHasChanged){if(instance.date>fromDate&&instance.date<toDate){payments.Add(instance);}}
+            else if(catHasChanged){if(instance.date>fromDate&&instance.category==category){payments.Add(instance);}}
+            else if(toDateHasChanged&&catHasChanged){if(instance.date>fromDate&&instance.category==category&&instance.date<toDate){payments.Add(instance);}}
+        }
+        StateHasChanged();
+    }
+
+    private void ToDateChange()
+    {
+        payments.Clear();
+        toDateHasChanged = true;
+        foreach (var instance in DB.paymentTable)
+        {
+            if(instance.date<toDate&&fromDateHasChanged==false&&catHasChanged==false){payments.Add(instance);}
+            else if(fromDateHasChanged){if(instance.date<toDate&&instance.date>fromDate){payments.Add(instance);}}
+            else if(catHasChanged){if(instance.date<toDate&&instance.category==category){payments.Add(instance);}}
+            else if(fromDateHasChanged&&catHasChanged){if(instance.date<toDate&&instance.category==category&&instance.date>fromDate){payments.Add(instance);}}
         }
         StateHasChanged();
     }
