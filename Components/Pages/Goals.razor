@@ -25,16 +25,16 @@
     }
 </style>
 <div class="btn-group" role="toolbar">
-    <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;" @onclick="() => mdAddGoal.Open()">Add</button>
+    <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;" @onclick="PrepareAdd">Add</button>
     <button class="btn-info" @onclick="() => mdPredictor.Open()">Predictor</button>
-    <button class="btn-secondary" @onclick="() => mdUpdateGoal.Open()">Update</button>
-    <button class="btn-danger" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Delete</button>
+    <button class="btn-secondary" @onclick="PrepareUpdate">Update</button>
+    <button class="btn-danger" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;" @onclick="DeleteSelected">Delete</button>
 </div>
 <table>
     @foreach(var instance in DB.goalTable)
     {
         <tr id="row.@instance.id">
-            <td><input id="row.cb.@instance.id" type="checkbox"/></td>
+            <td><input id="row.cb.@instance.id" type="checkbox" @onchange="() => cbxSelected(instance.id)" /></td>
             <td><h4>@instance.name</h4></td>
         </tr>
     }
@@ -42,14 +42,28 @@
 <ModalDialog @ref="@mdAddGoal" Title="Add Goal">
     <div class="row" style="margin-left:10px;margin-right:10px;">
         <label for="tbName" class="mdLbl">Name</label>
-        <input id="tbName" />
+        <input id="tbName" @bind="@newName"/>
         <label for="tbAmount" class="mdLbl">Amount</label>
-        <input id="tbAmount" type="number" />
+        <input id="tbAmount" type="number" @bind="@newOrigAmount"/>
         <label for="dpBy" class="mdLbl">By</label>
-        <input id="dbBy" type="date" />
+        <input id="dbBy" type="date" @bind="@newDateTime"/>
         <div class="btn-group" role="toolbar" style="margin-top:15px;padding:12px;">
             <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;width:50%;">Add</button>
-            <button class="btn btn-outline-secondary" @onclick="() => mdAddGoal.Close()" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Close</button>
+            <button class="btn btn-outline-secondary" @onclick="NewGoal" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Close</button>
+        </div>
+    </div>
+</ModalDialog>
+<ModalDialog @ref="@mdUpdateGoal" Title="Update Goal">
+    <div class="row" style="margin-left:10px;margin-right:10px;">
+        <label for="tbName" class="mdLbl">Name</label>
+        <input id="tbName" @bind="@newName" />
+        <label for="tbAmount" class="mdLbl">Amount</label>
+        <input id="tbAmount" type="number" @bind="@newOrigAmount" />
+        <label for="dpBy" class="mdLbl">By</label>
+        <input id="dbBy" type="date" @bind="@newDateTime" />
+        <div class="btn-group" role="toolbar" style="margin-top:15px;padding:12px;">
+            <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;width:50%;">Add</button>
+            <button class="btn btn-outline-secondary" @onclick="UpdateGoal" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Close</button>
         </div>
     </div>
 </ModalDialog>
@@ -63,4 +77,61 @@
     private ModalDialog mdAddGoal { get; set; }
     private ModalDialog mdUpdateGoal { get; set; }
     private ModalDialog mdPredictor { get; set; }
+    private List<Goal> toRemove { get; set; }
+    private long updID { get; set; }
+    private string newName { get; set; }
+    private double newAmount { get; set; }
+    private string newOrigAmount { get; set; }
+    private DateTime newDateTime { get; set; }
+    private void cbxSelected(long goalID)
+    {
+        if (toRemove.Contains(new Goal() { id = goalID }))
+        {
+            toRemove.Remove(toRemove.Find(x => x.id == goalID));
+        }
+        else
+        {
+            toRemove.Add(toRemove.Find(x => x.id == goalID));
+        }
+    }
+    private void DeleteSelected()
+    {
+        foreach(var goal in toRemove)
+        {
+            SQLite.deleteItem(goal);
+        }
+        toRemove.Clear();
+        StateHasChanged();
+    }
+    private void PrepareAdd()
+    {
+        newAmount = double.Parse(newOrigAmount);
+        mdAddGoal.Open();
+    }
+    private void NewGoal()
+    {
+        Goal goal = new Goal() {name=newName,amount=newAmount,targetDate=newDateTime };
+        DB.goalTable.Add(goal);
+        SQLite.writeData();
+        mdAddGoal.Close();
+        StateHasChanged();
+    }
+    private void PrepareUpdate()
+    {
+        if(toRemove.Count==1)
+        {
+            updID = toRemove[0].id;
+            newName = toRemove[0].name;
+            newAmount = toRemove[0].amount;
+            newDateTime = toRemove[0].targetDate;
+            mdUpdateGoal.Open();
+        }
+    }
+    private void UpdateGoal()
+    {
+        Goal goal = new Goal() { name = newName, amount = newAmount, targetDate = newDateTime };
+        SQLite.updateItem(goal);
+        mdUpdateGoal.Close();
+        StateHasChanged();
+    }
 }
