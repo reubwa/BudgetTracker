@@ -222,6 +222,7 @@
     private string newCategory { get; set; } = "";
     private double newCost { get; set; }
     private string newCostProvider { get; set; }
+    private long updID { get; set; }
     private DateTime newDate { get; set; }
     private List<Payment> toRemove { get; set; }
 
@@ -344,7 +345,7 @@
 
     private void UpdateSpending()
     {
-        Payment updPayment = new Payment() { name = newName, accountID = newAccountID, budgetID = newBudgetID, category = newCategory, cost = newCost, date = newDate };
+        Payment updPayment = new Payment() { name = newName, accountID = newAccountID, budgetID = newBudgetID, category = newCategory, cost = newCost, date = newDate, id = updID };
         SQLite.updateItem(updPayment);
         mdUpdateSpending.Close();
         StateHasChanged();
@@ -381,6 +382,7 @@
     {
         if (toRemove.Count == 1)
         {
+            updID = toRemove[0].id;
             newName = toRemove[0].name;
             newAccountID = toRemove[0].accountID;
             newBudgetID = toRemove[0].budgetID;
