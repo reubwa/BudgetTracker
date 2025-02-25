@@ -31,7 +31,7 @@
                 <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;" @onclick="() => mdAddBudget.Open()">Add</button>
                 <button class="btn-secondary" @onclick="() => mdUpdateBudget.Open()">Update</button>
                 <button class="btn-secondary" @onclick="() => mdUpdateSpending.Open()">Update Spending</button>
-                <button class="btn-danger" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Delete</button>
+                <button class="btn-danger" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;" @onclick="DeleteSelected">Delete</button>
             </div>
         </td>
     </tr>
@@ -40,7 +40,7 @@
     @foreach(var instance in DB.budgetTable)
     {
         <tr id="row.@instance.id">
-            <td><input type="checkbox" id="row.cb.@instance.id"/></td>
+            <td><input type="checkbox" id="row.cb.@instance.id" @onchange="() => cbxSelected(instance.id)"/></td>
             <td><h4>@instance.name</h4></td>
         </tr>
     }
@@ -66,4 +66,25 @@
     private ModalDialog mdAddBudget { get; set; }
     private ModalDialog mdUpdateBudget { get; set; }
     private ModalDialog mdUpdateSpending { get; set; }
+    private List<Budget> toRemove { get; set; }
+    private void cbxSelected(long budgetID)
+    {
+        if (toRemove.Contains(new Budget() { id = budgetID }))
+        {
+            toRemove.Remove(toRemove.Find(x => x.id == budgetID));
+        }
+        else
+        {
+            toRemove.Add(toRemove.Find(x => x.id == budgetID));
+        }
+    }
+    private void DeleteSelected()
+    {
+        foreach(var budget in toRemove)
+        {
+            SQLite.deleteItem(budget);
+        }
+        toRemove.Clear();
+        StateHasChanged();
+    }
 }
