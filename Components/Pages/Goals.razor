@@ -26,7 +26,7 @@
 </style>
 <div class="btn-group" role="toolbar">
     <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;" @onclick="PrepareAdd">Add</button>
-    <button class="btn-info" @onclick="() => mdPredictor.Open()">Predictor</button>
+    <button class="btn-info" @onclick="() => Globals.mdPredictor.Open()">Predictor</button>
     <button class="btn-secondary" @onclick="PrepareUpdate">Update</button>
     <button class="btn-danger" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;" @onclick="DeleteSelected">Delete</button>
 </div>
@@ -39,99 +39,103 @@
         </tr>
     }
 </table>
-<ModalDialog @ref="@mdAddGoal" Title="Add Goal">
+<ModalDialog @ref="@Globals.mdAddGoal" Title="Add Goal">
     <div class="row" style="margin-left:10px;margin-right:10px;">
         <label for="tbName" class="mdLbl">Name</label>
-        <input id="tbName" @bind="@newName"/>
+        <input id="tbName" @bind="@Globals.newName"/>
         <label for="tbAmount" class="mdLbl">Amount</label>
-        <input id="tbAmount" type="number" @bind="@newOrigAmount"/>
+        <input id="tbAmount" type="number" @bind="@Globals.newOrigAmount"/>
         <label for="dpBy" class="mdLbl">By</label>
-        <input id="dbBy" type="date" @bind="@newDateTime"/>
+        <input id="dbBy" type="date" @bind="@Globals.newDateTime"/>
         <div class="btn-group" role="toolbar" style="margin-top:15px;padding:12px;">
             <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;width:50%;" @onclick="NewGoal">Add</button>
-            <button class="btn btn-outline-secondary" @onclick="() => mdAddGoal.Close())" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Close</button>
+            <button class="btn btn-outline-secondary" @onclick="() => Globals.mdAddGoal.Close())" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Close</button>
         </div>
     </div>
 </ModalDialog>
-<ModalDialog @ref="@mdUpdateGoal" Title="Update Goal">
+<ModalDialog @ref="@Globals.mdUpdateGoal" Title="Update Goal">
     <div class="row" style="margin-left:10px;margin-right:10px;">
         <label for="tbName" class="mdLbl">Name</label>
-        <input id="tbName" @bind="@newName" />
+        <input id="tbName" @bind="@Globals.newName" />
         <label for="tbAmount" class="mdLbl">Amount</label>
-        <input id="tbAmount" type="number" @bind="@newOrigAmount" />
+        <input id="tbAmount" type="number" @bind="@Globals.newOrigAmount" />
         <label for="dpBy" class="mdLbl">By</label>
-        <input id="dbBy" type="date" @bind="@newDateTime" />
+        <input id="dbBy" type="date" @bind="@Globals.newDateTime" />
         <div class="btn-group" role="toolbar" style="margin-top:15px;padding:12px;">
             <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;width:50%;" @onclick="UpdateGoal">Add</button>
-            <button class="btn btn-outline-secondary" @onclick="() => mdUpdateGoal.Close()" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Close</button>
+            <button class="btn btn-outline-secondary" @onclick="() => Globals.mdUpdateGoal.Close()" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Close</button>
         </div>
     </div>
 </ModalDialog>
-<ModalDialog @ref="@mdPredictor" Title="Predictor">
+<ModalDialog @ref="@Globals.mdPredictor" Title="Predictor">
     <div class="row" style="margin-left:10px;margin-right:10px;">
         <h4>You'll reach your goal on time if you add at least £0 per month until then</h4>
-        <button class="btn btn-outline-secondary" @onclick="() => mdPredictor.Close()" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Close</button>
+        <button class="btn btn-outline-secondary" @onclick="() => Globals.mdPredictor.Close()" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Close</button>
     </div>
 </ModalDialog>
 @code {
-    private ModalDialog mdAddGoal { get; set; }
-    private ModalDialog mdUpdateGoal { get; set; }
-    private ModalDialog mdPredictor { get; set; }
-    private List<Goal> toRemove { get; set; }
-    private long updID { get; set; }
-    private string newName { get; set; }
-    private double newAmount { get; set; }
-    private string newOrigAmount { get; set; }
-    private DateTime newDateTime { get; set; }
+
+    public static class Globals
+    {
+        public static BudgetTracker.Components.ModalDialog mdAddGoal { get; set; }
+        public static BudgetTracker.Components.ModalDialog mdUpdateGoal { get; set; }
+        public static BudgetTracker.Components.ModalDialog mdPredictor { get; set; }
+        public static List<BudgetTracker.Goal> toRemove { get; set; }
+        public static long updID { get; set; }
+        public static string newName { get; set; }
+        public static double newAmount { get; set; }
+        public static string newOrigAmount { get; set; }
+        public static DateTime newDateTime { get; set; }
+    }
     private void cbxSelected(long goalID)
     {
-        if (toRemove.Contains(new Goal() { id = goalID }))
+        if (Globals.toRemove.Contains(new Goal() { id = goalID }))
         {
-            toRemove.Remove(toRemove.Find(x => x.id == goalID));
+            Globals.toRemove.Remove(Globals.toRemove.Find(x => x.id == goalID));
         }
         else
         {
-            toRemove.Add(toRemove.Find(x => x.id == goalID));
+            Globals.toRemove.Add(Globals.toRemove.Find(x => x.id == goalID));
         }
     }
     private void DeleteSelected()
     {
-        foreach(var goal in toRemove)
+        foreach(var goal in Globals.toRemove)
         {
             SQLite.deleteItem(goal);
         }
-        toRemove.Clear();
+        Globals.toRemove.Clear();
         StateHasChanged();
     }
     private void PrepareAdd()
     {
-        newAmount = double.Parse(newOrigAmount);
-        mdAddGoal.Open();
+        Globals.newAmount = double.Parse(Globals.newOrigAmount);
+        Globals.mdAddGoal.Open();
     }
     private void NewGoal()
     {
-        Goal goal = new Goal() {name=newName,amount=newAmount,targetDate=newDateTime };
+        Goal goal = new Goal() {name=Globals.newName,amount=Globals.newAmount,targetDate=Globals.newDateTime };
         DB.goalTable.Add(goal);
         SQLite.writeData();
-        mdAddGoal.Close();
+        Globals.mdAddGoal.Close();
         StateHasChanged();
     }
     private void PrepareUpdate()
     {
-        if(toRemove.Count==1)
+        if(Globals.toRemove.Count==1)
         {
-            updID = toRemove[0].id;
-            newName = toRemove[0].name;
-            newAmount = toRemove[0].amount;
-            newDateTime = toRemove[0].targetDate;
-            mdUpdateGoal.Open();
+            Globals.updID = Globals.toRemove[0].id;
+            Globals.newName = Globals.toRemove[0].name;
+            Globals.newAmount = Globals.toRemove[0].amount;
+            Globals.newDateTime = Globals.toRemove[0].targetDate;
+            Globals.mdUpdateGoal.Open();
         }
     }
     private void UpdateGoal()
     {
-        Goal goal = new Goal() { name = newName, amount = newAmount, targetDate = newDateTime };
+        Goal goal = new Goal() { name = Globals.newName, amount = Globals.newAmount, targetDate = Globals.newDateTime };
         SQLite.updateItem(goal);
-        mdUpdateGoal.Close();
+        Globals.mdUpdateGoal.Close();
         StateHasChanged();
     }
 }
