@@ -48,8 +48,8 @@
         <label for="dpBy" class="mdLbl">By</label>
         <input id="dbBy" type="date" @bind="@newDateTime"/>
         <div class="btn-group" role="toolbar" style="margin-top:15px;padding:12px;">
-            <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;width:50%;">Add</button>
-            <button class="btn btn-outline-secondary" @onclick="NewGoal" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Close</button>
+            <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;width:50%;" @onclick="NewGoal">Add</button>
+            <button class="btn btn-outline-secondary" @onclick="() => mdAddGoal.Close())" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Close</button>
         </div>
     </div>
 </ModalDialog>
@@ -62,8 +62,8 @@
         <label for="dpBy" class="mdLbl">By</label>
         <input id="dbBy" type="date" @bind="@newDateTime" />
         <div class="btn-group" role="toolbar" style="margin-top:15px;padding:12px;">
-            <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;width:50%;">Add</button>
-            <button class="btn btn-outline-secondary" @onclick="UpdateGoal" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Close</button>
+            <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;width:50%;" @onclick="UpdateGoal">Add</button>
+            <button class="btn btn-outline-secondary" @onclick="() => mdUpdateGoal.Close()" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Close</button>
         </div>
     </div>
 </ModalDialog>

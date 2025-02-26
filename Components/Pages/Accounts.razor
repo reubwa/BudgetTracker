@@ -64,8 +64,8 @@
         <label for="tbBalance" class="mdLbl">Balance</label>
         <input id="tbBalance" type="number" @bind="@newBalance"/>
         <div class="btn-group" role="toolbar" style="margin-top:15px;padding:12px;">
-            <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;width:50%;">Add</button>
-            <button class="btn btn-outline-secondary" @onclick="NewAccount" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Close</button>
+            <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;width:50%;" @onclick="NewAccount">Add</button>
+            <button class="btn btn-outline-secondary" @onclick="() => mdAddAccount.Close()" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Close</button>
         </div>
     </div>
 </ModalDialog>
@@ -84,8 +84,8 @@
         <label for="tbBalance" class="mdLbl">Balance</label>
         <input id="tbBalance" type="number" @bind="@updBalance" />
         <div class="btn-group" role="toolbar" style="margin-top:15px;padding:12px;">
-            <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;width:50%;">Add</button>
-            <button class="btn btn-outline-secondary" @onclick="NewAccount" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Close</button>
+            <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;width:50%;" @onclick="NewAccount">Add</button>
+            <button class="btn btn-outline-secondary" @onclick="() => mdUpdateAccount.Close())" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Close</button>
         </div>
     </div>
 </ModalDialog>
