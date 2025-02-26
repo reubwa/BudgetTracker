@@ -48,16 +48,19 @@
 <ModalDialog @ref="@mdAddBudget" Title="Add Budget">
     <div class="row" style="margin-left:10px;margin-right:10px;">
         <label for="tbName" class="mdLbl">Name</label>
-        <input id="tbName" />
+        <input id="tbName" @bind="@newName"/>
         <label for="tbStartingAmount" class="mdLbl">Starting Amount</label>
-        <input id="tbStartingAmount" type="number" />
+        <input id="tbStartingAmount" type="number" @bind="@initStartingAmount"/>
         <hr>
         <label for="ddGoal" class="mdLbl">Goal</label>
-        <select id="ddGoal">
-            <option>Option 1</option>
+        <select id="ddGoal" @bind-value="@newGoalId">
+            @foreach (var goal in DB.goalTable)
+            {
+                <option value="@goal.id">@goal.name</option>
+            }
         </select>
         <div class="btn-group" role="toolbar" style="margin-top:15px;padding:12px;">
-            <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;width:50%;">Add</button>
+            <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;width:50%;" @onclick="AddBudget">Add</button>
             <button class="btn btn-outline-secondary" @onclick="() => mdAddBudget.Close()" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Close</button>
         </div>
     </div>
@@ -85,6 +88,26 @@
             SQLite.deleteItem(budget);
         }
         toRemove.Clear();
+        StateHasChanged();
+    }
+    private string newName { get; set; }
+    private double newStartingAmount { get; set; }
+    private int newGoalId { get; set; }
+    private long updId { get; set; }
+    private string initStartingAmount { get; set; }
+
+    private void prepStartingAmount()
+    {
+        newStartingAmount = double.Parse(initStartingAmount);
+    }
+
+    private void AddBudget()
+    {
+        prepStartingAmount();
+        Budget newBudget = new Budget { goalID = newGoalId, name = newName, startingAmount = newStartingAmount };
+        DB.budgetTable.Add(newBudget);
+        SQLite.writeData();
+        mdAddBudget.Close();
         StateHasChanged();
     }
 }
