@@ -73,7 +73,7 @@
         <input id="tbStartingAmount" type="number" @bind="@initStartingAmount"/>
         <hr>
         <label for="ddGoal" class="mdLbl">Goal</label>
-        <select id="ddGoal" @bind-value="@newGoalId">
+        <select id="ddGoal" @bind="@newGoalId">
             @foreach (var goal in DB.goalTable)
             {
                 <option value="@goal.id">@goal.name</option>
