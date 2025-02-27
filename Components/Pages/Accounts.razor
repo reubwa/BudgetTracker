@@ -1,6 +1,7 @@
 ﻿@page "/accounts"
 @using Microsoft.AspNetCore.Authorization
 @rendermode InteractiveServer
+@using BudgetTracker
 @attribute [Authorize]
 <PageTitle>Accounts</PageTitle>
 <h3>Accounts</h3>
@@ -49,104 +50,108 @@
         </tr>
     }
 </table>
-<ModalDialog @ref="@mdAddAccount" Title="Add Account">
+<ModalDialog @ref="@Globals.mdAddAccount" Title="Add Account">
     <div class="row" style="margin-left:10px;margin-right:10px;">
         <label for="tbName" class="mdLbl">Name</label>
-        <input id="tbName" @bind="@newName"/>
+        <input id="tbName" @bind="@Globals.newName"/>
         <label for="tbInterestRate" class="mdLbl">Interest Rate</label>
-        <input id="tbInterestRate" type="number" @bind="@newInterestRate"/>
+        <input id="tbInterestRate" type="number" @bind="@Globals.newInterestRate"/>
         <label for="ddType" class="mdLbl">Type</label>
-        <select id="ddType" @bind="@newType">
+        <select id="ddType" @bind="@Globals.newType">
             <option value="Current">Current Account</option>
             <option value="Savings">Savings Account</option>
         </select>
         <hr>
         <label for="tbBalance" class="mdLbl">Balance</label>
-        <input id="tbBalance" type="number" @bind="@newBalance"/>
+        <input id="tbBalance" type="number" @bind="@Globals.newBalance"/>
         <div class="btn-group" role="toolbar" style="margin-top:15px;padding:12px;">
-            <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;width:50%;">Add</button>
-            <button class="btn btn-outline-secondary" @onclick="NewAccount" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Close</button>
+            <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;width:50%;" @onclick="NewAccount">Add</button>
+            <button class="btn btn-outline-secondary" @onclick="() => Globals.mdAddAccount.Close()" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Close</button>
         </div>
     </div>
 </ModalDialog>
-<ModalDialog @ref="@mdUpdateAccount" Title="Update Account">
+<ModalDialog @ref="@Globals.mdUpdateAccount" Title="Update Account">
     <div class="row" style="margin-left:10px;margin-right:10px;">
         <label for="tbName" class="mdLbl">Name</label>
-        <input id="tbName" @bind="@updName" />
+        <input id="tbName" @bind="@Globals.updName" />
         <label for="tbInterestRate" class="mdLbl">Interest Rate</label>
-        <input id="tbInterestRate" type="number" @bind="@updInterestRate" />
+        <input id="tbInterestRate" type="number" @bind="@Globals.updInterestRate" />
         <label for="ddType" class="mdLbl">Type</label>
-        <select id="ddType" @bind="@updType">
+        <select id="ddType" @bind="@Globals.updType">
             <option value="Current">Current Account</option>
             <option value="Savings">Savings Account</option>
         </select>
         <hr>
         <label for="tbBalance" class="mdLbl">Balance</label>
-        <input id="tbBalance" type="number" @bind="@updBalance" />
+        <input id="tbBalance" type="number" @bind="@Globals.updBalance" />
         <div class="btn-group" role="toolbar" style="margin-top:15px;padding:12px;">
-            <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;width:50%;">Add</button>
-            <button class="btn btn-outline-secondary" @onclick="NewAccount" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Close</button>
+            <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;width:50%;" @onclick="NewAccount">Add</button>
+            <button class="btn btn-outline-secondary" @onclick="() => Globals.mdUpdateAccount.Close())" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Close</button>
         </div>
     </div>
 </ModalDialog>
 @code {
-    private ModalDialog mdAddAccount { get; set; }
-    private ModalDialog mdUpdateAccount { get; set; }
-    private List<Account> toRemove { get; set; }
+
+    public static class Globals
+    {
+        public static BudgetTracker.Components.ModalDialog mdAddAccount { get; set; }
+        public static BudgetTracker.Components.ModalDialog mdUpdateAccount { get; set; }
+        public static List<BudgetTracker.Account> toRemove { get; set; }
+        public static string newName { get; set; }
+        public static double newInterestRate { get; set; }
+        public static double newBalance { get; set; }
+        public static string newType { get; set; }
+        public static long updID { get; set; }
+        public static string updName { get; set; }
+        public static double updInterestRate { get; set; }
+        public static double updBalance { get; set; }
+        public static string updType { get; set; }
+    }
     private void cbxSelected(long accountID)
     {
-        if (toRemove.Contains(new Account() { id = accountID }))
+        if (Globals.toRemove.Contains(new Account() { id = accountID }))
         {
-            toRemove.Remove(toRemove.Find(x => x.id == accountID));
+            Globals.toRemove.Remove(Globals.toRemove.Find(x => x.id == accountID));
         }
         else
         {
-            toRemove.Add(toRemove.Find(x => x.id == accountID));
+            Globals.toRemove.Add(Globals.toRemove.Find(x => x.id == accountID));
         }
     }
-    private string newName { get; set; }
-    private double newInterestRate { get; set; }
-    private double newBalance { get; set; }
-    private string newType { get; set; }
-    private long updID { get; set; }
-    private string updName { get; set; }
-    private double updInterestRate { get; set; }
-    private double updBalance { get; set; }
-    private string updType { get; set; }
     private void NewAccount()
     {
-        Account newAccount = new Account { name = newName, balance = newBalance, interestRate = newInterestRate, type = newType};
+        Account newAccount = new Account { name = Globals.newName, balance = Globals.newBalance, interestRate = Globals.newInterestRate, type = Globals.newType};
         DB.accountTable.Add(newAccount);
         SQLite.writeData();
-        mdAddAccount.Close();
+        Globals.mdAddAccount.Close();
         StateHasChanged();
     }
     private void DeleteSelected()
     {
-        foreach(var account in toRemove)
+        foreach(var account in Globals.toRemove)
         {
             SQLite.deleteItem(account);
         }
-        toRemove.Clear();
+        Globals.toRemove.Clear();
         StateHasChanged();
     }
     private void UpdateAccount()
     {
-        Account updAccount = new Account { name = updName, balance = updBalance, interestRate = updInterestRate, type = updType, id = updID };
+        Account updAccount = new Account { name = Globals.updName, balance = Globals.updBalance, interestRate = Globals.updInterestRate, type = Globals.updType, id = Globals.updID };
         SQLite.updateItem(updAccount);
-        mdUpdateAccount.Close();
+        Globals.mdUpdateAccount.Close();
         StateHasChanged();
     }
     private void prepUpdate()
     {
-        if(toRemove.Count==1)
+        if(Globals.toRemove.Count==1)
         {
-            updID = toRemove[0].id;
-            updName = toRemove[0].name;
-            updBalance = toRemove[0].balance;
-            updInterestRate = toRemove[0].interestRate;
-            updType = toRemove[0].type;
-            mdUpdateAccount.Open();
+            Globals.updID = Globals.toRemove[0].id;
+            Globals.updName = Globals.toRemove[0].name;
+            Globals.updBalance = Globals.toRemove[0].balance;
+            Globals.updInterestRate = Globals.toRemove[0].interestRate;
+            Globals.updType = Globals.toRemove[0].type;
+            Globals.mdUpdateAccount.Open();
         }
     }
 }
