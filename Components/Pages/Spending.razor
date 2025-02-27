@@ -349,6 +349,11 @@
         SQLite.updateItem(updPayment);
         mdUpdateSpending.Close();
         StateHasChanged();
+        newName = "";
+        newAccountID = 0;
+        newBudgetID = 0;
+        newCostProvider = "";
+        newDate = DateTime.Now;
     }
 
     private void CostPreparer()

@@ -29,7 +29,7 @@
         <td>
             <div class="btn-group" role="toolbar">
                 <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;" @onclick="() => mdAddBudget.Open()">Add</button>
-                <button class="btn-secondary" @onclick="() => mdUpdateBudget.Open()">Update</button>
+                <button class="btn-secondary" @onclick="MakeUpdate">Update</button>
                 <button class="btn-secondary" @onclick="() => mdUpdateSpending.Open()">Update Spending</button>
                 <button class="btn-danger" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;" @onclick="DeleteSelected">Delete</button>
             </div>
@@ -48,17 +48,40 @@
 <ModalDialog @ref="@mdAddBudget" Title="Add Budget">
     <div class="row" style="margin-left:10px;margin-right:10px;">
         <label for="tbName" class="mdLbl">Name</label>
-        <input id="tbName" />
+        <input id="tbName" @bind="@newName"/>
         <label for="tbStartingAmount" class="mdLbl">Starting Amount</label>
-        <input id="tbStartingAmount" type="number" />
+        <input id="tbStartingAmount" type="number" @bind="@bindStartingAmount"/>
         <hr>
         <label for="ddGoal" class="mdLbl">Goal</label>
-        <select id="ddGoal">
-            <option>Option 1</option>
+        <select id="ddGoal" @bind="@newGoalId">
+            @foreach(var instance in DB.goalTable)
+            {
+                <option value="@instance.id">@instance.name</option>
+            }
         </select>
         <div class="btn-group" role="toolbar" style="margin-top:15px;padding:12px;">
-            <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;width:50%;">Add</button>
+            <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;width:50%;" @onclick="AddBudget">Add</button>
             <button class="btn btn-outline-secondary" @onclick="() => mdAddBudget.Close()" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Close</button>
+        </div>
+    </div>
+</ModalDialog>
+<ModalDialog @ref="@mdUpdateBudget" Title="Update Budget">
+    <div class="row" style="margin-left:10px;margin-right:10px;">
+        <label for="tbName" class="mdLbl">Name</label>
+        <input id="tbName" @bind="@newName" />
+        <label for="tbStartingAmount" class="mdLbl">Starting Amount</label>
+        <input id="tbStartingAmount" type="number" @bind="@bindStartingAmount" />
+        <hr>
+        <label for="ddGoal" class="mdLbl">Goal</label>
+        <select id="ddGoal" @bind="@newGoalId">
+            @foreach (var instance in DB.goalTable)
+            {
+                <option value="@instance.id">@instance.name</option>
+            }
+        </select>
+        <div class="btn-group" role="toolbar" style="margin-top:15px;padding:12px;">
+            <button class="btn-primary" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px;width:50%;" @onclick="PerformUpdate">Add</button>
+            <button class="btn btn-outline-secondary" @onclick="() => mdUpdateBudget.Close()" style="border-bottom-right-radius: 5px;border-top-right-radius: 5px;">Close</button>
         </div>
     </div>
 </ModalDialog>
@@ -67,6 +90,11 @@
     private ModalDialog mdUpdateBudget { get; set; }
     private ModalDialog mdUpdateSpending { get; set; }
     private List<Budget> toRemove { get; set; }
+    private long updId { get; set; }
+    private string newName { get; set; }
+    private double newStartingAmount { get; set; }
+    private string bindStartingAmount { get; set; }
+    private int newGoalId { get; set; }
     private void cbxSelected(long budgetID)
     {
         if (toRemove.Contains(new Budget() { id = budgetID }))
@@ -86,5 +114,35 @@
         }
         toRemove.Clear();
         StateHasChanged();
+    }
+    private void MakeUpdate()
+    {
+        if(toRemove.Count==1)
+        {
+            updId = toRemove[0].id;
+            newName = toRemove[0].name;
+            newGoalId = toRemove[0].goalID;
+            bindStartingAmount = toRemove[0].startingAmount.ToString();
+            mdUpdateBudget.Open();
+        }
+    }
+    private void AddBudget()
+    {
+        newStartingAmount = double.Parse(bindStartingAmount);
+        Budget newBudget = new Budget() { name=newName,startingAmount=newStartingAmount,goalID=newGoalId};
+        DB.budgetTable.Add(newBudget);
+        SQLite.writeData();
+        mdAddBudget.Close();
+        StateHasChanged();
+    }
+    private void PerformUpdate()
+    {
+        Budget updBudget = new Budget() { id = updId, name = newName, startingAmount = newStartingAmount, goalID = newGoalId };
+        SQLite.updateItem(updBudget);
+        mdUpdateBudget.Close();
+        StateHasChanged();
+        newName = "";
+        newStartingAmount = 0;
+        newGoalId = 0;
     }
 }
